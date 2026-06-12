@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="500dp"
+        android:layout_height="150dp">
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/button_background"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
+
+        <!-- ВАЖНО: Только ОДИН ConstraintLayout на весь макет -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp">
+
+            <!-- Заголовок (Start & Stop) -->
+            <TextView
+                    android:id="@+id/header"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="?attr/cardHeader"
+                    android:textColor="@color/card_header_text"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline_actions"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Описание (Выключение двигателя...) -->
+            <TextView
+                    android:id="@+id/description"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="?attr/cardDescription"
+                    android:textColor="@color/card_description_text"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline_actions"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/header" />
+
+            <!-- Линия-ограничитель (чтобы текст не налезал на стрелку и свитч справа) -->
+            <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline_actions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.75" />
+
+            <View
+                    android:id="@+id/vertical_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:background="#33FFFFFF"
+                    app:thumbTint="@xml/switch_thumb_selector"
+                    app:trackTint="@xml/switch_track_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/guideline_actions"
+                    android:layout_marginStart="24dp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/card_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    app:thumbTint="@xml/switch_thumb_selector"
+                    app:trackTint="@xml/switch_track_selector"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/vertical_divider" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

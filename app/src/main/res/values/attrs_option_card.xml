@@ -4,5 +4,7 @@
         <attr name="exampleDimension" format="dimension" />
         <attr name="exampleColor" format="color" />
         <attr name="exampleDrawable" format="color|reference" />
+        <attr name="cardHeader" format="reference|string" />
+        <attr name="cardDescription" format="reference|string" />
     </declare-styleable>
 </resources>
