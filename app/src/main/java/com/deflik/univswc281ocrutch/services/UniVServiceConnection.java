@@ -2,12 +2,15 @@ package com.deflik.univswc281ocrutch.services;
 
 import android.car.Car;
 import android.car.hardware.cabin.CarCabinManager;
+import android.car.hardware.property.CarPropertyManager;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.deflik.univswc281ocrutch.infrastructure.Constants;
 
 public class UniVServiceConnection implements ServiceConnection {
     private Car uniV;
@@ -20,10 +23,11 @@ public class UniVServiceConnection implements ServiceConnection {
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         try {
-            Log.i("I", "univcrutch connection received");
+            Log.i(Constants.LOG_TAG, "univcrutch connection received");
             var uniVCabinManager = (CarCabinManager) uniV.getCarManager(Car.CABIN_SERVICE);
-            Log.i("I", "univcrutch manager created");
-            controller.RegisterCabinManager(uniVCabinManager);
+            var uniVPropertyManager = (CarPropertyManager) uniV.getCarManager(Car.PROPERTY_SERVICE);
+            Log.i(Constants.LOG_TAG, "univcrutch manager created");
+            controller.RegisterCabinManager(uniVCabinManager, uniVPropertyManager);
 
 //            var propsList = uniVCabinManager.getPropertyList();
 //            Log.i("I", "univcrutch props obtained");
@@ -31,7 +35,7 @@ public class UniVServiceConnection implements ServiceConnection {
 //                Log.i("univcrutch props", prop.toString());
 //            }
         } catch (Exception e) {
-            Log.i("I", "univ connection exception" + e);
+            Log.i(Constants.LOG_TAG, "univ connection exception" + e);
         }
     }
 

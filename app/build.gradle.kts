@@ -31,9 +31,14 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        dataBinding = true
     }
 }
 
@@ -43,6 +48,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.cardview)
 //    implementation("androidx.car.app:app:1.2.0")
 //    implementation("androidx.media:media:1.6.0")
 //    implementation("androidx.appcompat:appcompat:1.6.1")
