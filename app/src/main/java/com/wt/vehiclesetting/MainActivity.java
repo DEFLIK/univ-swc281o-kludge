@@ -9,9 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.deflik.univswc281ocrutch.infrastructure.Constants;
 import com.deflik.univswc281ocrutch.services.UniVServiceConnection;
+import com.deflik.univswc281ocrutch.ui.MainViewPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,5 +42,27 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(Constants.LOG_TAG, "univcrutch exception" + e);
         }
+
+        TabLayout tabLayout = findViewById(R.id.sectionsTabLayout);
+        ViewPager2 viewPager = findViewById(R.id.mainViewPager);
+
+        // 1. Создаем и устанавливаем адаптер
+        var adapter = new MainViewPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+
+        // 2. Настраиваем TabLayoutMediator для синхронизации вкладок
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0:
+                    tab.setText("Настройки");
+                    break;
+                case 1:
+                    tab.setText("Подробнее");
+                    break;
+                case 2:
+                    tab.setText("Лог");
+                    break;
+            }
+        }).attach();
     }
 }

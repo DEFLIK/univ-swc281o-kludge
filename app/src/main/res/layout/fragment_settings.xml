@@ -1,0 +1,43 @@
+﻿<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context="com.deflik.univswc281ocrutch.ui.SettingsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/optionButtonList"
+            app:layout_constraintTop_toBottomOf="@+id/topMenu">
+
+        <androidx.constraintlayout.helper.widget.Flow
+                app:flow_wrapMode="none"
+                app:flow_horizontalGap="20dp"
+                app:flow_verticalGap="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids=" exhaustOption,startStopOption,exhaustOption"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/optionsFlow"
+                android:layout_marginTop="20dp" />
+
+        <include
+                layout="@layout/option_card"
+                android:id="@+id/startStopOption"
+                android:theme="@style/cardStartStop" />
+
+        <include
+                layout="@layout/option_card"
+                android:id="@+id/exhaustOption"
+                android:theme="@style/cardExhaust" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
