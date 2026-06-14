@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">UniVCrutch</string>
+    <string name="app_name">UniVKludge</string>
+    <string name="accessibility_description">Приложение использует эту службу для отслеживания нажатия специальной кнопки и выполнения назначенных действий.</string>
+    <string name="accessibility_service_label">UniVKludge</string>
 </resources>

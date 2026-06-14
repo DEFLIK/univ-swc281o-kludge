@@ -6,6 +6,9 @@
     <uses-permission android:name="android.car.permission.CAR_PROPERTY_SET" />
     <uses-permission android:name="android.car.permission.CAR_VENDOR_EXTENSION" />
     <uses-permission android:name="android.car.permission.CAR_INFO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.car.permission.CAR_INPUT" />
 
     <application
         android:allowBackup="true"
@@ -34,6 +37,12 @@
 <!--            android:name=".infrastructure.UniVServiceConnection"-->
 <!--            android:enabled="true"-->
 <!--            android:exported="true" />-->
+<!--        <service-->
+<!--                android:name="com.deflik.univswc281ocrutch.services.KeyInterceptorService"-->
+<!--                android:foregroundServiceType="specialUse"-->
+<!--                android:enabled="true"-->
+<!--                android:exported="false" />-->
+
 
         <activity
             android:name=".MainActivity"
@@ -44,6 +53,22 @@
             </intent-filter>
             <meta-data android:name="distractionOptimized" android:value="true"/>
         </activity>
+
+<!--        <service-->
+<!--                android:name=".MyAccessibilityService"-->
+<!--                android:label="@string/accessibility_service_label"-->
+<!--                android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"-->
+<!--                android:exported="true">-->
+
+<!--            <intent-filter>-->
+<!--                <action android:name="android.accessibilityservice.AccessibilityService" />-->
+<!--            </intent-filter>-->
+
+<!--            &lt;!&ndash; 3. Ссылка на XML-файл конфигурации (находится в res/xml/) &ndash;&gt;-->
+<!--            <meta-data-->
+<!--                    android:name="android.accessibilityservice"-->
+<!--                    android:resource="@xml/accessibility_service_config" />-->
+<!--        </service>-->
     </application>
 
 </manifest>

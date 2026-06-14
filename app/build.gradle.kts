@@ -1,4 +1,5 @@
 ﻿import org.gradle.kotlin.dsl.implementation
+import java.io.ByteArrayOutputStream
 
 plugins {
     alias(libs.plugins.android.application)
@@ -17,7 +18,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,12 +30,20 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "GIT_HASH", getGitCommitHash())
+        }
+        debug {
+            buildConfigField("String", "GIT_HASH", getGitCommitHash())
         }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -46,10 +55,19 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.cardview)
     implementation(libs.viewpager2)
-//    implementation("androidx.car.app:app:1.2.0")
-//    implementation("androidx.media:media:1.6.0")
-//    implementation("androidx.appcompat:appcompat:1.6.1")
-//    testImplementation(libs.junit)
-//    androidTestImplementation(libs.ext.junit)
-//    androidTestImplementation(libs.espresso.core)
+    implementation("com.google.code.gson:gson:2.10.1")
+}
+
+fun getGitCommitHash(): String {
+    return try {
+        val stdout = ByteArrayOutputStream()
+        val process = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--short", "HEAD"))
+        process.inputStream.use { input ->
+            input.copyTo(stdout)
+        }
+        process.waitFor()
+        "\"${stdout.toString().trim()}\""
+    } catch (e: Exception) {
+        "\"No git hash\""
+    }
 }

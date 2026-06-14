@@ -7,7 +7,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.deflik.univswc281ocrutch.infrastructure.AppLog;
 import com.wt.vehiclesetting.R;
 
 public class LogFragment extends Fragment {
@@ -21,8 +23,13 @@ public class LogFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Вся логика, которая была в Activity, переносится сюда.
-        // Пример поиска кнопки:
-        // Button myButton = view.findViewById(R.id.myButton);
+        var logOutput = (TextView) view.findViewById(R.id.logOutput);
+        AppLog.bindTextView(logOutput);
+    }
+
+    @Override
+    public void onDestroyView() {
+        AppLog.unbindTextView();
+        super.onDestroyView();
     }
 }

@@ -1,28 +1,31 @@
 package com.deflik.univswc281ocrutch.services;
 
-import android.car.CarNotConnectedException;
-import android.car.hardware.CarPropertyValue;
 import android.car.hardware.cabin.CarCabinManager;
 import android.car.hardware.property.CarPropertyManager;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.deflik.univswc281ocrutch.infrastructure.Constants;
+//import com.deflik.univswc281ocrutch.decompiled.AppInfo;
+//import com.deflik.univswc281ocrutch.infrastructure.Constants;
+import com.deflik.univswc281ocrutch.infrastructure.AppLog;
 import com.deflik.univswc281ocrutch.models.UniVMCUOptionIds;
-import com.wt.vehiclesetting.R;
 
 public class UniVSettingsController {
 
     private final AppCompatActivity activity;
+    private final static int PropertiesGlobalAreaId = 1048576;
+    private final static String PersonalSettingsDescriptor = "com.incall.apps.commoninterface.userservice.IPersonalService";
+    private CarCabinManager uniVCabinManager;
+    private CarPropertyManager uniVPropertyManager;
+
 
     public UniVSettingsController(AppCompatActivity mainActivity) {
         this.activity = mainActivity;
     }
 
-    public void RegisterCabinManager(CarCabinManager uniVCabinManager, CarPropertyManager uniVPropertyManager) {
+    public void RegisterManagers(CarCabinManager uniVCabinManager, CarPropertyManager uniVPropertyManager) {
+
+
 //        TextView textView = activity.findViewById(R.id.textView);
 //        activity.runOnUiThread(() -> textView.append("started "));
 //
@@ -96,9 +99,50 @@ public class UniVSettingsController {
 ////                throw new RuntimeException(e);
 ////            }
 ////        });
+        this.uniVCabinManager = uniVCabinManager;
+        this.uniVPropertyManager = uniVPropertyManager;
     }
 
     public void UnregisterCabinManager() {
         // todo
     }
+
+    public void changeExhaustState() {
+        if (!isInitialized())
+            return;
+
+        try {
+            var props = uniVCabinManager.getPropertyList();
+            var exProp = props.stream().filter(x -> x.getPropertyId() == UniVMCUOptionIds.EXHAUST_NOISE).findFirst().orElse(null);
+            if (exProp != null) {
+                AppLog.e("EXHAUST prop not found");
+                return;
+            }
+            AppLog.i("found EXHAUST prop: " + exProp);
+
+            var currVal = uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId);
+            AppLog.i("EXHAUST prop value BEFORE set: " + currVal);
+
+            if (currVal == 0)
+                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 2);
+            else
+                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 0);
+
+            AppLog.i("EXHAUST prop value AFTER set: " + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId));
+        } catch (Exception e) {
+            AppLog.e("EXHAUST value set failed" + e);
+        }
+    }
+
+    private boolean isInitialized() {
+        var isManagersInitialized = uniVCabinManager != null && uniVPropertyManager != null;
+        if (!isManagersInitialized)
+            AppLog.e("some of managers not initialized (" +
+                    "cabin mngr is null: " + (uniVCabinManager == null) +
+                    "property mngr is null: " + (uniVPropertyManager == null)
+            );
+
+        return isManagersInitialized;
+    }
+
 }
