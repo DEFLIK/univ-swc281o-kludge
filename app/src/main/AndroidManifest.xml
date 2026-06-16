@@ -1,74 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.car.permission.CAR_POWERTRAIN" />
     <uses-permission android:name="android.car.permission.CAR_PROPERTY_READ" />
     <uses-permission android:name="android.car.permission.CAR_PROPERTY_SET" />
     <uses-permission android:name="android.car.permission.CAR_VENDOR_EXTENSION" />
     <uses-permission android:name="android.car.permission.CAR_INFO" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.car.permission.CAR_MONITOR_INPUT" />
     <uses-permission android:name="android.car.permission.CAR_INPUT" />
+    <uses-permission android:name="android.car.permission.CAR_CONTROL" />
+    <uses-permission android:name="com.incall.permission.HARD_KEY_SERVICE" />
+    <uses-permission android:name="android.car.permission.BIND_CAR_INPUT_SERVICE" />
 
     <application
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.UniVSWC281OCrutch" >
-<!--        <service-->
-<!--            android:name=".services.MainCarAppService"-->
-<!--            android:exported="true"-->
-<!--            android:label="@string/app_name" >-->
-<!--            <intent-filter>-->
-<!--                <action android:name="androidx.car.app.MainCarAppService" />-->
-
-<!--                <category android:name="androidx.car.app.category.IOT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
-<!--        <meta-data-->
-<!--                android:name="androidx.car.app.minCarApiLevel"-->
-<!--                android:value="1" />-->
-<!--        <service-->
-<!--            android:name=".infrastructure.UniVServiceConnection"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true" />-->
-<!--        <service-->
-<!--                android:name="com.deflik.univswc281ocrutch.services.KeyInterceptorService"-->
-<!--                android:foregroundServiceType="specialUse"-->
-<!--                android:enabled="true"-->
-<!--                android:exported="false" />-->
-
+            android:allowBackup="true"
+            android:dataExtractionRules="@xml/data_extraction_rules"
+            android:fullBackupContent="@xml/backup_rules"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/Theme.UniVSWC281OCrutch">
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true" >
+                android:name=".MainActivity"
+                android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data android:name="distractionOptimized" android:value="true"/>
+
+            <meta-data
+                    android:name="distractionOptimized"
+                    android:value="true" />
         </activity>
 
-<!--        <service-->
-<!--                android:name=".MyAccessibilityService"-->
-<!--                android:label="@string/accessibility_service_label"-->
-<!--                android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"-->
-<!--                android:exported="true">-->
+        <service
+                android:name="com.deflik.univswc281ocrutch.services.UniVAccessibilityService"
+                android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+                android:enabled="true"
+                android:exported="true"
+                android:persistent="true">
+            <intent-filter>
 
-<!--            <intent-filter>-->
-<!--                <action android:name="android.accessibilityservice.AccessibilityService" />-->
-<!--            </intent-filter>-->
+                <action
+                        android:name="com.incall.HARD_KEY_SERVICE" />
 
-<!--            &lt;!&ndash; 3. Ссылка на XML-файл конфигурации (находится в res/xml/) &ndash;&gt;-->
-<!--            <meta-data-->
-<!--                    android:name="android.accessibilityservice"-->
-<!--                    android:resource="@xml/accessibility_service_config" />-->
-<!--        </service>-->
+                <action
+                        android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                    android:name="android.accessibilityservice"
+                    android:resource="@xml/accessibility_service_config" />
+        </service>
     </application>
-
 </manifest>

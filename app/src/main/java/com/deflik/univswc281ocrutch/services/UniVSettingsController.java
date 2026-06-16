@@ -1,122 +1,103 @@
 package com.deflik.univswc281ocrutch.services;
 
+import android.car.CarNotConnectedException;
+import android.car.VehiclePropertyIds;
 import android.car.hardware.cabin.CarCabinManager;
 import android.car.hardware.property.CarPropertyManager;
+import android.content.Context;
+import android.os.IBinder;
+import android.os.RemoteException;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-//import com.deflik.univswc281ocrutch.decompiled.AppInfo;
-//import com.deflik.univswc281ocrutch.infrastructure.Constants;
 import com.deflik.univswc281ocrutch.infrastructure.AppLog;
 import com.deflik.univswc281ocrutch.models.UniVMCUOptionIds;
+import com.deflik.univswc281ocrutch.models.UniVSettingKeys;
+import com.deflik.univswc281ocrutch.services.decompiled.CollectionService;
+import com.deflik.univswc281ocrutch.services.decompiled.PersonalCenterManager;
+
+import java.util.Arrays;
 
 public class UniVSettingsController {
-
-    private final AppCompatActivity activity;
     private final static int PropertiesGlobalAreaId = 1048576;
-    private final static String PersonalSettingsDescriptor = "com.incall.apps.commoninterface.userservice.IPersonalService";
-    private CarCabinManager uniVCabinManager;
-    private CarPropertyManager uniVPropertyManager;
+    private final static String SharedPrefAppName = "univkludge_settings";
+    private final Context appContext;
+    private final CarCabinManager uniVCabinManager;
+    private final CarPropertyManager uniVPropertyManager;
+    private UniVEngineStateListener engineStateListener;
+    private IBinder collectBinder;
+    private IBinder personalBinder;
 
-
-    public UniVSettingsController(AppCompatActivity mainActivity) {
-        this.activity = mainActivity;
-    }
-
-    public void RegisterManagers(CarCabinManager uniVCabinManager, CarPropertyManager uniVPropertyManager) {
-
-
-//        TextView textView = activity.findViewById(R.id.textView);
-//        activity.runOnUiThread(() -> textView.append("started "));
-//
-//
-//        Button buttonOpen = activity.findViewById(R.id.exhaustOpenButton);
-//        buttonOpen.setOnClickListener(view -> {
-//            activity.runOnUiThread(() -> textView.append("open "));
-//            try {
-//                var props = uniVCabinManager.getPropertyList();
-////                for (var prop : props)
-////                    Log.i(Constants.LOG_TAG, "p: " + prop);
-//
-//                var exProp = props.stream().filter(x -> x.getPropertyId() == UniVMCUOptionIds.EXHAUST_NOISE).findFirst().orElse(null);
-//                if (exProp != null) {
-//                    Log.i(Constants.LOG_TAG, "found EXHAUST prop: " + exProp);
-//                    Log.i(Constants.LOG_TAG, "get ex int area 0" + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 0));
-//                    Log.i(Constants.LOG_TAG, "get ex int area 1048576" + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 1048576));
-////                    Log.i(Constants.LOG_TAG, "get ex string" + uniVCabinManager.getStringProperty(UniVMCUOptionIds.EXHAUST_NOISE, 0));
-//                }
-//
-////                var spProp = props.stream().filter(x -> x.getPropertyId() == UniVMCUOptionIds.SPOILER).findFirst().orElse(null);
-////                if (spProp != null) {
-////                    Log.i(Constants.LOG_TAG, "found SPOILER prop: " + spProp);
-////                    Log.i(Constants.LOG_TAG, "get sp int" + uniVCabinManager.getIntProperty(UniVMCUOptionIds.SPOILER, 0));
-////                    Log.i(Constants.LOG_TAG, "get sp string" + uniVCabinManager.getStringProperty(UniVMCUOptionIds.SPOILER, 0));
-////                }
-//
-//
-//                Log.i(Constants.LOG_TAG, "univcrutch set open");
-//                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 1048576, 2);
-//                Log.i(Constants.LOG_TAG, "get ex int after open area 0" + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 0));
-//                Log.i(Constants.LOG_TAG, "get ex int after open area 1048576" + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 1048576));
-//            } catch (Exception e) {
-//                Log.i(Constants.LOG_TAG, "univcrutch set open FAILED" + e);
-//                throw new RuntimeException(e);
-//            }
-//
-//        });
-//
-//        Button buttonClose = activity.findViewById(R.id.exhaustCloseButton);
-//        buttonClose.setOnClickListener(view -> {
-//            activity.runOnUiThread(() -> textView.append("close "));
-//            try {
-//                Log.i(Constants.LOG_TAG, "univcrutch set close");
-//                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 1048576, 1);
-//            } catch (CarNotConnectedException e) {
-//                Log.i(Constants.LOG_TAG, "univcrutch set close FAILED" + e);
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        Button buttonOpen2 = activity.findViewById(R.id.exhaustOpenButton2);
-//        buttonOpen2.setOnClickListener(view -> {
-//            activity.runOnUiThread(() -> textView.append("open "));
-//            try {
-//                Log.i(Constants.LOG_TAG, "univcrutch set open");
-//                uniVPropertyManager.setIntProperty(557846434, 1048576, 1);
-//            } catch (CarNotConnectedException e) {
-//                Log.i(Constants.LOG_TAG, "univcrutch set open FAILED" + e);
-//                throw new RuntimeException(e);
-//            }
-//        });
-////        Button buttonClose2 = activity.findViewById(R.id.exhaustCloseButton2);
-////        buttonClose2.setOnClickListener(view -> {
-////            activity.runOnUiThread(() -> textView.append("close prop "));
-////            try {
-////                Log.i(Constants.LOG_TAG, "univcrutch set close prop");
-////                uniVPropertyManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, 0, 1);
-////            } catch (CarNotConnectedException e) {
-////                Log.i(Constants.LOG_TAG, "univcrutch set close prop FAILED" + e);
-////                throw new RuntimeException(e);
-////            }
-////        });
+    public UniVSettingsController(
+            Context appContext,
+            CarCabinManager uniVCabinManager,
+            CarPropertyManager uniVPropertyManager) {
+        this.appContext = appContext;
         this.uniVCabinManager = uniVCabinManager;
         this.uniVPropertyManager = uniVPropertyManager;
+
+        try {
+            engineStateListener = new UniVEngineStateListener(
+                    this::activateMcuPropsOnStart,
+                    this::saveMcuPropsStateOnShutdown);
+            uniVPropertyManager.registerListener(
+                    engineStateListener,
+                    VehiclePropertyIds.IGNITION_STATE,
+                    0.0f);
+        } catch (Exception | Error e) {
+            AppLog.e("failed to register engine state listener " + e);
+        }
     }
 
-    public void UnregisterCabinManager() {
-        // todo
+    public void dispose() {
+        AppLog.i("disposing univ settings controller");
+        uniVPropertyManager.unregisterListener(engineStateListener);
+    }
+    public void setCollectBinder(IBinder collectBinder)
+    {
+        this.collectBinder = collectBinder;
     }
 
-    public void changeExhaustState() {
+    public void setPersonalBinder(IBinder personalBinder) {
+        this.personalBinder = personalBinder;
+    }
+
+    public void onKeyEvent(int keyCode) {
+        if (keyCode == 1005)
+            tryChangeExhaustState();
+    }
+
+    public void saveAppSettingState(UniVSettingKeys settingKey, boolean value) {
+        try {
+            AppLog.i("saving setting value " + settingKey.getKeyString() + "=" + value);
+            var sharedPref = appContext.getSharedPreferences(SharedPrefAppName, Context.MODE_PRIVATE);
+            sharedPref.edit().putBoolean(settingKey.getKeyString(), value).apply();
+        } catch (Exception | Error e) {
+            AppLog.e("failed to set app setting value " + settingKey + " " + e);
+        }
+    }
+
+    public boolean getAppSettingState(UniVSettingKeys settingKey) {
+        try {
+            var sharedPref = appContext.getSharedPreferences(SharedPrefAppName, Context.MODE_PRIVATE);
+            var value = sharedPref.getBoolean(settingKey.getKeyString(), false);
+            AppLog.i("obtained setting value " + settingKey.getKeyString() + "=" + value);
+
+            return value;
+        } catch (Exception | Error e) {
+            AppLog.e("failed obtaining app setting value " + settingKey + " " + e);
+            return false;
+        }
+    }
+
+    public boolean tryChangeExhaustState() {
         if (!isInitialized())
-            return;
+            return false;
 
         try {
             var props = uniVCabinManager.getPropertyList();
             var exProp = props.stream().filter(x -> x.getPropertyId() == UniVMCUOptionIds.EXHAUST_NOISE).findFirst().orElse(null);
-            if (exProp != null) {
+            if (exProp == null) {
                 AppLog.e("EXHAUST prop not found");
-                return;
+                return false;
             }
             AppLog.i("found EXHAUST prop: " + exProp);
 
@@ -126,23 +107,112 @@ public class UniVSettingsController {
             if (currVal == 0)
                 uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 2);
             else
-                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 0);
+                uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 1);
 
             AppLog.i("EXHAUST prop value AFTER set: " + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId));
-        } catch (Exception e) {
+        } catch (Exception | Error e) {
             AppLog.e("EXHAUST value set failed" + e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean tryDisableCustomButtonLauncherIteration() {
+        return trySaveInternalUniVData(
+                "589824",
+                "0x1009",
+                "1406",
+                9,
+                "CSTM DISABLE");
+    }
+
+    public boolean tryRestoreCustomButtonLauncherIteration() {
+        return trySaveInternalUniVData(
+            "589824",
+            "0x1003",
+            "1406",
+            4,
+            "CSTM MUTE");
+    }
+
+    public boolean tryDisableStartStop() {
+        try {
+            var props = uniVCabinManager.getPropertyList();
+            var ssProp = props.stream().filter(x -> x.getPropertyId() == UniVMCUOptionIds.START_STOP).findFirst().orElse(null);
+            if (ssProp == null) {
+                AppLog.e("STARTSTOP prop not found");
+                return false;
+            }
+            AppLog.i("found STARTSTOP prop: " + ssProp);
+
+            var currVal = uniVCabinManager.getIntProperty(UniVMCUOptionIds.START_STOP, PropertiesGlobalAreaId);
+            AppLog.i("STARTSTOP prop value BEFORE set: " + currVal);
+
+            uniVCabinManager.setIntProperty(UniVMCUOptionIds.START_STOP, PropertiesGlobalAreaId, 1);
+            AppLog.i("STARTSTOP prop value AFTER set: " + uniVCabinManager.getIntProperty(UniVMCUOptionIds.START_STOP, PropertiesGlobalAreaId));
+            return true;
+        } catch (Exception e) {
+            AppLog.i("failed to disable StartStop: " + e);
+            return false;
+        }
+    }
+
+    public boolean trySaveInternalUniVData(
+            String personalServiceDataLocationId,
+            String personalServiceDataValue,
+            String collectServiceDataLocationId,
+            int collectServiceDataValue,
+            String DataNameLog
+            ) {
+        if (!isInitialized())
+            return false;
+
+        try {
+            PersonalCenterManager.saveOtherAppInfoByOther(personalBinder, 3, personalServiceDataLocationId, "", personalServiceDataValue);
+            AppLog.i("set other app info SUCCESS " + DataNameLog);
+        } catch (RemoteException e) {
+            AppLog.e("set other app info FAILED " + DataNameLog + ": " + e);
+            return false;
+        }
+        try {
+            CollectionService.uploadData(collectBinder, collectServiceDataLocationId, collectServiceDataValue);
+            AppLog.i("upload data SUCCESS: " + DataNameLog);
+        } catch (RemoteException e) {
+            AppLog.e("upload data FAILED " + DataNameLog + ": " + e);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void activateMcuPropsOnStart() {
+        if (getAppSettingState(UniVSettingKeys.START_STOP_OPTION_KEY))
+            tryDisableStartStop();
+    }
+
+    private void saveMcuPropsStateOnShutdown() {
+        try { // todo
+            var propValue = uniVCabinManager.getIntProperty(UniVMCUOptionIds.AUTO_HOLD, PropertiesGlobalAreaId);
+            var propValue2 = uniVCabinManager.getIntProperty(UniVMCUOptionIds.AUTO_HOLD, 524288);
+            AppLog.i("autohold prop value on shut " + propValue);
+            AppLog.i("autohold prop value on shut 2 " + propValue2);
+
+            var arrPropVal = uniVCabinManager.getIntArrayProperty(UniVMCUOptionIds.AUTO_HOLD, 16777216);
+            AppLog.i("autohold ARR prop value on shut " + Arrays.toString(arrPropVal));
+        } catch (CarNotConnectedException e) {
+            AppLog.e("failed to save autohold value on shut " + e);
         }
     }
 
     private boolean isInitialized() {
-        var isManagersInitialized = uniVCabinManager != null && uniVPropertyManager != null;
-        if (!isManagersInitialized)
-            AppLog.e("some of managers not initialized (" +
-                    "cabin mngr is null: " + (uniVCabinManager == null) +
-                    "property mngr is null: " + (uniVPropertyManager == null)
+        var isBindersCreated = collectBinder != null && personalBinder != null;
+        if (!isBindersCreated)
+            AppLog.e("some of binders are not created yet:"
+                    + "\n\tcollect binder is null: " + (collectBinder == null)
+                    + "\n\tpersonal binder is null: " + (personalBinder == null)
             );
 
-        return isManagersInitialized;
+        return isBindersCreated;
     }
-
 }

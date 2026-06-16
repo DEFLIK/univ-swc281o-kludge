@@ -20,9 +20,5 @@ public class AboutFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // Вся логика, которая была в Activity, переносится сюда.
-        // Пример поиска кнопки:
-        // Button myButton = view.findViewById(R.id.myButton);
     }
 }
