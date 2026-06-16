@@ -6,7 +6,7 @@
 
     <style name="cardStartStop" parent="Theme.UniVSWC281OCrutch">
         <item name="cardHeader">Отключение Start &amp; Stop</item>
-        <item name="cardDescription">Автоматическое отключение Start &amp; Stop при запуске ГУ</item>
+        <item name="cardDescription">Автоматическое отключение Start &amp; Stop при запуске двигателя</item>
     </style>
     <style name="cardExhaust" parent="Theme.UniVSWC281OCrutch">
         <item name="cardHeader">Управление заслонками выхлопа</item>
