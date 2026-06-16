@@ -21,13 +21,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
-                android:textColor="@color/button_check_enabled"
+                android:textColor="@color/active"
                 android:scrollbars="vertical"
                 android:fadeScrollbars="false"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp" />
     </androidx.core.widget.NestedScrollView>
 
 </FrameLayout>
