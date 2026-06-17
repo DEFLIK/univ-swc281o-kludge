@@ -34,8 +34,8 @@ public class SettingsFragment extends Fragment {
             .getSingletonInstance(requireContext().getApplicationContext())
             .onEstablishedConnection(settingsController -> {
                 bindSettingViewToController(view, settingsController);
-                view.findViewById(R.id.connection_loader).setVisibility(GONE);
-            }).onConnectionClosed(() -> view.findViewById(R.id.connection_loader).setVisibility(VISIBLE));
+                view.findViewById(R.id.connection_loader).setVisibility(GONE);});
+//            .onConnectionClosed(() -> view.findViewById(R.id.connection_loader).setVisibility(VISIBLE)); todo fix memory leakage
     }
 
     public void bindSettingViewToController(View view, UniVSettingsController settingsController) {

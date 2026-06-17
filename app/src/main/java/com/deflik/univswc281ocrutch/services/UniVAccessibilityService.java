@@ -80,7 +80,11 @@ public class UniVAccessibilityService extends AccessibilityService {
     @Override
     public void onDestroy() {
         AppLog.i("accessibility service onDestroy");
-        UniVServiceConnection.disconnect();
+        try {
+            UniVServiceConnection.disconnect();
+        } catch (Exception | Error e) {
+            AppLog.i("failed disconnecting uni v from accessibilityService " + e);
+        }
         super.onDestroy();
     }
 }

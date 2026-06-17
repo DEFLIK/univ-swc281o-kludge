@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.commitHashText)).setText(BuildConfig.GIT_HASH);
 
         UniVServiceConnection.getSingletonInstance(getApplicationContext())
-            .onEstablishedConnection(ctrl -> (findViewById(R.id.disconnectedText)).setVisibility(INVISIBLE))
-            .onConnectionClosed(() -> (findViewById(R.id.disconnectedText)).setVisibility(VISIBLE));
+            .onEstablishedConnection(ctrl -> (findViewById(R.id.disconnectedText)).setVisibility(INVISIBLE));
+//            .onConnectionClosed(() -> (findViewById(R.id.disconnectedText)).setVisibility(VISIBLE)); todo fix memory leakage
 
         TabLayout tabLayout = findViewById(R.id.sectionsTabLayout);
         ViewPager2 viewPager = findViewById(R.id.mainViewPager);
