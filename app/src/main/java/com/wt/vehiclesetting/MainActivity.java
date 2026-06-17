@@ -37,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.commitHashText)).setText(BuildConfig.GIT_HASH);
 
         UniVServiceConnection.getSingletonInstance(getApplicationContext())
-            .onEstablishedConnection(ctrl -> (findViewById(R.id.disconnectedText)).setVisibility(INVISIBLE));
-//            .onConnectionClosed(() -> (findViewById(R.id.disconnectedText)).setVisibility(VISIBLE)); todo fix memory leakage
+            .onEstablishedConnection(MainActivity.class.getName() ,
+                ctrl -> (findViewById(R.id.disconnectedText)).setVisibility(INVISIBLE))
+            .onConnectionClosed(MainActivity.class.getName(),
+                () -> (findViewById(R.id.disconnectedText)).setVisibility(VISIBLE));
 
         TabLayout tabLayout = findViewById(R.id.sectionsTabLayout);
         ViewPager2 viewPager = findViewById(R.id.mainViewPager);
@@ -59,5 +61,13 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }).attach();
+    }
+
+    @Override
+    public void onDestroy() {
+        UniVServiceConnection
+                .getSingletonInstance(getApplicationContext())
+                .unsubscribeConnectionListeners(MainActivity.class.getName());
+        super.onDestroy();
     }
 }

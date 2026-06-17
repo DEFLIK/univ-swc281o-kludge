@@ -32,10 +32,10 @@ public class SettingsFragment extends Fragment {
 
         UniVServiceConnection
             .getSingletonInstance(requireContext().getApplicationContext())
-            .onEstablishedConnection(settingsController -> {
+            .onEstablishedConnection(SettingsFragment.class.getName(), settingsController -> {
                 bindSettingViewToController(view, settingsController);
-                view.findViewById(R.id.connection_loader).setVisibility(GONE);});
-//            .onConnectionClosed(() -> view.findViewById(R.id.connection_loader).setVisibility(VISIBLE)); todo fix memory leakage
+                view.findViewById(R.id.connection_loader).setVisibility(GONE);})
+            .onConnectionClosed(SettingsFragment.class.getName(), () -> view.findViewById(R.id.connection_loader).setVisibility(VISIBLE));
     }
 
     public void bindSettingViewToController(View view, UniVSettingsController settingsController) {
@@ -61,5 +61,13 @@ public class SettingsFragment extends Fragment {
                 settingsController.tryRestoreCustomButtonLauncherIteration();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        UniVServiceConnection
+            .getSingletonInstance(requireContext().getApplicationContext())
+            .unsubscribeConnectionListeners(SettingsFragment.class.getName());
+        super.onDestroy();
     }
 }

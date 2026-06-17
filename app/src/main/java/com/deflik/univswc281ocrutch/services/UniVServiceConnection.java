@@ -12,6 +12,7 @@ import android.os.IBinder;
 import com.deflik.univswc281ocrutch.infrastructure.AppLog;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,8 +26,8 @@ public class UniVServiceConnection implements ServiceConnection {
     private Context appContext;
     private UniVSettingsController controller;
     private Car uniV;
-    private List<Consumer<UniVSettingsController>> onEstablishedConnectionSubscriptions = new ArrayList<>();
-    private List<Runnable> onConnectionClosedSubscriptions = new ArrayList<>();
+    private HashMap<String, Consumer<UniVSettingsController>> onEstablishedConnectionSubscriptions = new HashMap<>();
+    private HashMap<String, Runnable> onConnectionClosedSubscriptions = new HashMap<>();
 
     private ServiceConnection personalConnection = new ServiceConnection() {
         @Override
@@ -73,7 +74,7 @@ public class UniVServiceConnection implements ServiceConnection {
 
             controller = new UniVSettingsController(appContext, uniVCabinManager, uniVPropertyManager);
 
-            onEstablishedConnectionSubscriptions.forEach(sub -> sub.accept(controller));
+            onEstablishedConnectionSubscriptions.values().forEach(sub -> sub.accept(controller));
         } catch (Exception | Error e) {
             AppLog.e("univ connection exc" + e);
         }
@@ -85,16 +86,21 @@ public class UniVServiceConnection implements ServiceConnection {
         dispose();
     }
 
-    public UniVServiceConnection onEstablishedConnection(Consumer<UniVSettingsController> action) {
+    public UniVServiceConnection onEstablishedConnection(String subscriberName,  Consumer<UniVSettingsController> action) {
         if (controller != null)
             action.accept(controller);
 
-        onEstablishedConnectionSubscriptions.add(action);
+        onEstablishedConnectionSubscriptions.put(subscriberName, action);
         return this;
     }
 
-    public void onConnectionClosed(Runnable action) {
-        onConnectionClosedSubscriptions.add(action);
+    public void onConnectionClosed(String subscriberName, Runnable action) {
+        onConnectionClosedSubscriptions.put(subscriberName, action);
+    }
+
+    public void unsubscribeConnectionListeners(String subscriberName) {
+        onEstablishedConnectionSubscriptions.remove(subscriberName);
+        onConnectionClosedSubscriptions.remove(subscriberName);
     }
 
     public static UniVServiceConnection getSingletonInstance(Context appContext) {
@@ -138,7 +144,7 @@ public class UniVServiceConnection implements ServiceConnection {
 
     private void dispose() {
         AppLog.i("disposing connection singleton instance");
-        onConnectionClosedSubscriptions.forEach(Runnable::run);
+        onConnectionClosedSubscriptions.values().forEach(Runnable::run);
         onConnectionClosedSubscriptions = null;
         onEstablishedConnectionSubscriptions = null;
         controller.dispose();
