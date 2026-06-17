@@ -2,6 +2,7 @@ package com.deflik.univswc281ocrutch.services;
 
 import android.accessibilityservice.AccessibilityService;
 import android.content.Context;
+import android.content.Intent;
 import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
@@ -76,6 +77,12 @@ public class UniVAccessibilityService extends AccessibilityService {
     @Override
     public void onInterrupt() {
     }
+
+    @Override
+    public int onStartCommand(Intent intent, int i, int i2) {
+        return START_STICKY;
+    }
+
 
     @Override
     public void onDestroy() {

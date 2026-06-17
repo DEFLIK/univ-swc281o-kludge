@@ -43,10 +43,8 @@
                 android:exported="true"
                 android:persistent="true">
             <intent-filter>
-
                 <action
                         android:name="com.incall.HARD_KEY_SERVICE" />
-
                 <action
                         android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
