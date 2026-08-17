@@ -26,7 +26,7 @@ public class AppLog {
     }
 
     public static void log(String prefix, String message) {
-        var timestamp = new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault());
+        var timestamp = new SimpleDateFormat("dd.MM HH:mm:ss.SSS", Locale.getDefault());
         final var logMessage = "[" + timestamp.format(new Date()) + "] " + prefix + " " + message + "\n";
         var textView = targetTextViewRef.get();
 

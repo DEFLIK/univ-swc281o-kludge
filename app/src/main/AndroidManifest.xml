@@ -36,6 +36,18 @@
                     android:value="true" />
         </activity>
 
+        <receiver
+                android:name="com.deflik.univswc281ocrutch.services.UniVBootReceiver"
+                android:enabled="true"
+                android:exported="true">
+            <intent-filter>
+                <action
+                        android:name="android.intent.action.BOOT_COMPLETED" />
+                <action
+                        android:name="android.intent.action.CUSTOM_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service
                 android:name="com.deflik.univswc281ocrutch.services.UniVAccessibilityService"
                 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"

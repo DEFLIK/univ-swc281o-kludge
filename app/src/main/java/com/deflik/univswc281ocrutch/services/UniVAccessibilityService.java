@@ -72,14 +72,17 @@ public class UniVAccessibilityService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
+//        AppLog.i("accessibility event " + event.toString());
     }
 
     @Override
     public void onInterrupt() {
+        AppLog.i("accessibility interrupt");
     }
 
     @Override
     public int onStartCommand(Intent intent, int i, int i2) {
+        AppLog.i("accessibility start command");
         return START_STICKY;
     }
 

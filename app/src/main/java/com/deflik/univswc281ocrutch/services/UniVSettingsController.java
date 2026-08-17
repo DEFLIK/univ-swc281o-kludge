@@ -108,8 +108,6 @@ public class UniVSettingsController {
                 uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 2);
             else
                 uniVCabinManager.setIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId, 1);
-
-            AppLog.i("EXHAUST prop value AFTER set: " + uniVCabinManager.getIntProperty(UniVMCUOptionIds.EXHAUST_NOISE, PropertiesGlobalAreaId));
         } catch (Exception | Error e) {
             AppLog.e("EXHAUST value set failed" + e);
             return false;
@@ -150,7 +148,6 @@ public class UniVSettingsController {
             AppLog.i("STARTSTOP prop value BEFORE set: " + currVal);
 
             uniVCabinManager.setIntProperty(UniVMCUOptionIds.START_STOP, PropertiesGlobalAreaId, 1);
-            AppLog.i("STARTSTOP prop value AFTER set: " + uniVCabinManager.getIntProperty(UniVMCUOptionIds.START_STOP, PropertiesGlobalAreaId));
             return true;
         } catch (Exception e) {
             AppLog.i("failed to disable StartStop: " + e);
